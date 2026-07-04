@@ -15,7 +15,7 @@
 	"build": {
 		"appId": "com.POOG.app",
 		"productName": "POOG",
-		"compression": "max",
+		"compression": "maximum",
 		"files": [
 			"electron.js",
 			".next/**/*",
