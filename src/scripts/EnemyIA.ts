@@ -1,8 +1,8 @@
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { IScript, visibleAsNumber } from "babylonjs-editor-tools";
-import { ENEMIES, EnemyStats } from "../entities/enemy";
-
+import { ENEMIES, EnemyStats, getDamageMultiplier } from "../entities/enemy";
+import { GameState } from "../gameState"; // ajuste o caminho
 export default class EnemyIA implements IScript {
 
     private stats: EnemyStats = { ...ENEMIES.slime };
@@ -21,43 +21,51 @@ export default class EnemyIA implements IScript {
         }
     }
 
-    public takedmg(amount: number): void {
-        const now = Date.now();
-        if (now - this.lastDamageTime < this.damageCooldown) {
-            return;
-        }
-        this.lastDamageTime = now;
-        this.stats.hp -= amount;
-        console.log("HP:", this.stats.hp, "| tipo:", this.stats.xpDrop);
+        public takedmg(amount: number, fromProjectile: boolean = false): void {
+            const now = Date.now();
+            if (now - this.lastDamageTime < this.damageCooldown) return;
 
-        if (this.stats.hp <= 0) {
-            console.log("inimigo morreu");
+            this.lastDamageTime = now;
 
-            const player = this.mesh.getScene().getMeshByName("Player");
-            const playerComponent = player?.metadata?.playerComponent;
+            const multiplier = fromProjectile ? getDamageMultiplier(this.stats.type) : 1;
+            const finalDamage = amount * multiplier;
 
-            if (playerComponent && typeof playerComponent.addXp === "function") {
-                playerComponent.addXp(this.stats.xpDrop);
+            this.stats.hp -= finalDamage;
+            console.log(`HP: ${this.stats.hp} | dano: ${finalDamage} (x${multiplier})`);
+
+            if (this.stats.hp <= 0) {
+                console.log("inimigo morreu");
+
+                const player = this.mesh.getScene().getMeshByName("Player");
+                const playerComponent = player?.metadata?.playerComponent;
+
+                if (playerComponent && typeof playerComponent.addXp === "function") {
+                    playerComponent.addXp(this.stats.xpDrop);
+                }
+
+                this.mesh.dispose();
             }
-
-            this.mesh.dispose();
         }
-    }
 
     public onUpdate(): void {
+        if (GameState.isPaused || GameState.isGameOver) return;
+
         const player = this.mesh.getScene().getMeshByName("Player");
         const projectiles = this.mesh.getScene().meshes.filter(m => m.name === "Projectile");
 
-        if (!player) {
-            return;
-        }
+        if (!player) return;
+
+
+        const playerComponent = player.metadata?.playerComponent;
+        const playerDmg = playerComponent?.statsP?.dmg ?? 1;
+
         if (this.mesh.intersectsMesh(player, false)) {
-            this.takedmg(1);
+            this.takedmg(playerDmg);
         }
 
         for (const projectile of projectiles) {
             if (this.mesh.intersectsMesh(projectile, false)) {
-                this.takedmg(1);
+                this.takedmg(playerDmg, true);
                 break;
             }
         }

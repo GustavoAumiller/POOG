@@ -10,7 +10,7 @@ export interface PlayerStats {
 
 export const PLAYER = {
     player1: {
-        hp: 10,
+        hp: 40,
         dmg: 1,
         speed: 4,
         atkspeed:2,

@@ -81,7 +81,8 @@
                 ],
                 "customMetadata": {
                     "hp": "30"
-                }
+                },
+                "doNotSerialize": true
             },
             "instances": [],
             "animations": [],
@@ -175,7 +176,8 @@
         ],
         "customMetadata": {
             "hp": "30"
-        }
+        },
+        "doNotSerialize": true
     },
     "basePoseMatrix": [
         1,

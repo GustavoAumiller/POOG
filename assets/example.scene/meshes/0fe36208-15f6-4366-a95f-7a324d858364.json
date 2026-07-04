@@ -199,11 +199,11 @@
             "disableBumpMap": false,
             "albedoTexture": {
                 "tags": null,
-                "url": "assets/albedo.png",
+                "url": "assets/Textures/Ground_material_1.jpg",
                 "uOffset": 0,
                 "vOffset": 0,
-                "uScale": 500,
-                "vScale": 500,
+                "uScale": 100,
+                "vScale": 100,
                 "uAng": 0,
                 "vAng": 0,
                 "wAng": 0,
@@ -212,11 +212,11 @@
                 "wRotationCenter": 0.5,
                 "homogeneousRotationInUVTransform": false,
                 "isBlocking": true,
-                "name": "assets/albedo.png",
+                "name": "assets/Textures/Ground_material_1.jpg",
                 "metadata": {
                     "baseSize": {
-                        "width": 512,
-                        "height": 512
+                        "width": 1024,
+                        "height": 1024
                     }
                 },
                 "hasAlpha": false,
@@ -242,8 +242,8 @@
                 "animations": [],
                 "invertY": true,
                 "samplingMode": 3,
-                "_creationFlags": 0,
                 "_useSRGBBuffer": false,
+                "internalTextureLabel": "C:/Users/gatta/OneDrive/Documentos/POOG/assets/Textures/Grou",
                 "noMipmap": false
             },
             "ambientTextureStrength": 1,

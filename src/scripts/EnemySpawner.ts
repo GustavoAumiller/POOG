@@ -5,7 +5,7 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { IScript, applyScriptOnObject } from "babylonjs-editor-tools";
 import EnemyIA from "./EnemyIA";
 import { ENEMIES } from "../entities/enemy";
-
+import { GameState } from "../gameState";
 export default class EnemySpawner implements IScript {
 
     private spawnCooldown = 3000;
@@ -18,6 +18,7 @@ export default class EnemySpawner implements IScript {
     public onStart(): void {}
 
     public async onUpdate(): Promise<void> {
+        if (GameState.isPaused || GameState.isGameOver) return; 
         const dt = this.mesh.getScene().getEngine().getDeltaTime();
         this.timeSinceLastSpawn += dt;
 
@@ -47,8 +48,7 @@ export default class EnemySpawner implements IScript {
 
         const enemyMesh = MeshBuilder.CreateBox("Enemy", { size: scaledSize }, this.mesh.getScene());
 
-        // ajusta o Y pra base do mesh ficar no mesmo nível do chão, não o centro
-        const groundY = this.mesh.position.y; // assume que o player já está no nível correto do chão
+        const groundY = this.mesh.position.y;
         const spawnPosition = this.mesh.position.add(new Vector3(offsetX, 0, offsetZ));
         spawnPosition.y = groundY + (scaledSize / 2);
 

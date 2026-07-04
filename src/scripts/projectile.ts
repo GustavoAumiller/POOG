@@ -1,13 +1,13 @@
 import { Mesh, MeshBuilder, Scene, Vector3 } from "@babylonjs/core";
 
 export class Projectile {
-    private speed = 300; // ajustei pra um valor mais razoável, veja a nota no final
+    private speed = 300;
     private lifeTime = 2;
     private elapsed = 0;
     private direction: Vector3;
 
     public constructor(public mesh: Mesh, direction: Vector3) {
-        this.direction = direction.normalizeToNew(); // garante magnitude 1, só direção
+        this.direction = direction.normalizeToNew();
     }
 
     public static create(scene: Scene, posicaoInicial: Vector3, direction: Vector3): Projectile {

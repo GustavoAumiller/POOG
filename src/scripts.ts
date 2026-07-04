@@ -5,13 +5,13 @@
 
 import { loadScene, scriptsDictionary, scriptAssetsCache, _applyScriptsForObject, _removeRegisteredScriptInstance, _preloadScriptsAssets } from "babylonjs-editor-tools";
 import * as scripts_EnemyIA from "./scripts/EnemyIA";
-import * as scripts_EnemySpawner from "./scripts/EnemySpawner";
 import * as scripts_moving from "./scripts/moving";
+import * as scripts_EnemySpawner from "./scripts/EnemySpawner";
 
 export const scriptsMap = {
     "scripts/EnemyIA.ts": scripts_EnemyIA,
-	"scripts/EnemySpawner.ts": scripts_EnemySpawner,
-	"scripts/moving.ts": scripts_moving
+	"scripts/moving.ts": scripts_moving,
+	"scripts/EnemySpawner.ts": scripts_EnemySpawner
 };
 
 export { loadScene, scriptsDictionary, scriptAssetsCache, _applyScriptsForObject, _removeRegisteredScriptInstance, _preloadScriptsAssets };
