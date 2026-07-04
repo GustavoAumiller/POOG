@@ -2,7 +2,7 @@ name: Build Electron
 
 on:
   push:
-    branches: [main] 
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -20,8 +20,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
+
+      - name: Instalar dependências do sistema (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm fakeroot dpkg libarchive-tools
 
       - name: Instalar dependências
         run: npm install --legacy-peer-deps
