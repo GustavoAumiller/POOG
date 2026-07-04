@@ -5,6 +5,7 @@ export interface EnemyStats {
     size: number;
     type: number;
     xpDrop: number;
+    texture?: string;
 }
 
 export const ENEMIES = {
@@ -15,6 +16,7 @@ export const ENEMIES = {
         size: 60,
         type: 0,
         xpDrop: 185,
+        texture: "assets/Textures/inimigo_1.jpg"
     },
     orc: {
         hp: 10,
@@ -22,7 +24,8 @@ export const ENEMIES = {
         speed: 3,
         size: 160,
         type: 1,
-        xpDrop: 1456
+        xpDrop: 1456,
+        texture: "assets/Textures/inimigo_2.jpg"
     },
     goblin:{
         hp: 22,
@@ -30,6 +33,7 @@ export const ENEMIES = {
         speed: 3,
         size: 400,
         type: 1,
-        xpDrop: 4580
+        xpDrop: 4580,
+        texture: "assets/Textures/inimigo_3.jpg"
     }
 };

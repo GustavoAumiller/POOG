@@ -1,4 +1,6 @@
-import { Mesh, MeshBuilder } from "@babylonjs/core/Meshes";
+import { Mesh, MeshBuilder} from "@babylonjs/core/Meshes";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { IScript, applyScriptOnObject } from "babylonjs-editor-tools";
 import EnemyIA from "./EnemyIA";
@@ -51,6 +53,11 @@ export default class EnemySpawner implements IScript {
         spawnPosition.y = groundY + (scaledSize / 2);
 
         enemyMesh.position = spawnPosition;
+        if (stats.texture) {
+            const mat = new StandardMaterial(`mat_${enemyType}_${enemyMesh.uniqueId}`, this.mesh.getScene());
+            mat.diffuseTexture = new Texture(stats.texture, this.mesh.getScene());
+            enemyMesh.material = mat;
+        }
 
         enemyMesh.metadata = enemyMesh.metadata ?? {};
         enemyMesh.metadata.initialStats = stats;
