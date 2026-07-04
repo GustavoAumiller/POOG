@@ -16,7 +16,7 @@ export const ENEMIES = {
         size: 60,
         type: 2,
         xpDrop: 185,
-        texture: "assets/Textures/inimigo_1.jpg"
+        texture: "assets/Textures/test1.jpg"
     },
     orc: {
         hp: 10,

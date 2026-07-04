@@ -15,11 +15,11 @@
 	"build": {
 		"appId": "com.POOG.app",
 		"productName": "POOG",
+		"compression": "max",
 		"files": [
 			"electron.js",
 			".next/**/*",
 			"public/**/*",
-			"node_modules/**/*",
 			"package.json"
 		],
 		"win": {
