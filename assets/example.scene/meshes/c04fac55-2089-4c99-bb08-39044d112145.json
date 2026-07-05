@@ -205,6 +205,7 @@
                 "animations": [],
                 "invertY": true,
                 "samplingMode": 3,
+                "_creationFlags": 0,
                 "_useSRGBBuffer": false,
                 "internalTextureLabel": "C:/Users/gatta/OneDrive/Documentos/POOG/assets/Textures/Play",
                 "noMipmap": false
@@ -238,8 +239,8 @@
                 "name": "assets/Textures/Player_material_normal.jpg",
                 "metadata": {
                     "baseSize": {
-                        "width": 1024,
-                        "height": 1037
+                        "width": 256,
+                        "height": 256
                     }
                 },
                 "hasAlpha": false,
@@ -265,6 +266,7 @@
                 "animations": [],
                 "invertY": true,
                 "samplingMode": 3,
+                "_creationFlags": 0,
                 "_useSRGBBuffer": false,
                 "internalTextureLabel": "C:/Users/gatta/OneDrive/Documentos/POOG/assets/Textures/Play",
                 "noMipmap": false

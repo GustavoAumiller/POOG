@@ -1,4 +1,5 @@
 export interface EnemyStats {
+    maxHp : number,
     hp: number;
     dmg: number;
     speed: number;
@@ -10,30 +11,33 @@ export interface EnemyStats {
 
 export const ENEMIES = {
     slime: {
+        maxHp : 5,
         hp: 5,
         dmg: 1,
-        speed: 4,
+        speed: 5,
         size: 60,
         type: 2,
-        xpDrop: 185,
+        xpDrop: 100,
         texture: "assets/Textures/test1.jpg"
     },
     orc: {
+        maxHp : 10,
         hp: 10,
         dmg: 1,
-        speed: 3,
+        speed: 4,
         size: 160,
         type: 0,
-        xpDrop: 1456,
+        xpDrop: 100,
         texture: "assets/Textures/inimigo_2.jpg"
     },
     goblin:{
+        maxHp : 22,
         hp: 22,
         dmg: 1,
         speed: 3,
         size: 400,
         type: 1,
-        xpDrop: 4580,
+        xpDrop: 100,
         texture: "assets/Textures/inimigo_3.jpg"
     }
 };

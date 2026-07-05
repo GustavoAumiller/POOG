@@ -4,14 +4,14 @@
     "shadowOrthoScale": 0.1,
     "autoUpdateExtends": true,
     "autoCalcShadowZBounds": false,
-    "orthoLeft": 1.7976931348623157e+308,
-    "orthoRight": 5e-324,
-    "orthoTop": 5e-324,
-    "orthoBottom": 1.7976931348623157e+308,
+    "orthoLeft": -209.35152685019114,
+    "orthoRight": 137.84880733812375,
+    "orthoTop": 131.43980701962624,
+    "orthoBottom": -214.06341271095798,
     "diffuse": [
+        0.48999999999999955,
         1,
-        1,
-        1
+        0.5699999999999996
     ],
     "specular": [
         1,
@@ -34,9 +34,9 @@
         100
     ],
     "direction": [
-        -1,
-        -2,
-        -1
+        -2.6599999999999957,
+        -3.64,
+        3.699999999999992
     ],
     "name": "sun",
     "id": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",

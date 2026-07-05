@@ -1,5 +1,5 @@
 {
-    "className": "CascadedShadowGenerator",
+    "className": "ShadowGenerator",
     "lightId": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
     "id": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
     "mapSize": 4096,
@@ -7,7 +7,7 @@
     "darkness": 0,
     "transparencyShadow": true,
     "frustumEdgeFalloff": 0,
-    "bias": 0.002680000000000003,
+    "bias": 0.00005,
     "normalBias": 0,
     "usePercentageCloserFiltering": true,
     "useContactHardeningShadow": false,
@@ -27,17 +27,5 @@
         "32ac55e7-579a-4224-8936-55d561884744",
         "c04fac55-2089-4c99-bb08-39044d112145"
     ],
-    "numCascades": 4,
-    "debug": false,
-    "stabilizeCascades": false,
-    "lambda": 0.5,
-    "cascadeBlendPercentage": 0.1,
-    "depthClamp": true,
-    "autoCalcDepthBounds": false,
-    "shadowMaxZ": 10000,
-    "penumbraDarkness": 1,
-    "freezeShadowCastersBoundingInfo": false,
-    "minDistance": 0,
-    "maxDistance": 1,
     "refreshRate": 1
 }
