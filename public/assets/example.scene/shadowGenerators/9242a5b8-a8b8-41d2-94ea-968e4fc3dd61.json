@@ -1,0 +1,31 @@
+{
+    "className": "ShadowGenerator",
+    "lightId": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
+    "id": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
+    "mapSize": 4096,
+    "forceBackFacesOnly": false,
+    "darkness": 0,
+    "transparencyShadow": true,
+    "frustumEdgeFalloff": 0,
+    "bias": 0.00005,
+    "normalBias": 0,
+    "usePercentageCloserFiltering": true,
+    "useContactHardeningShadow": false,
+    "contactHardeningLightSizeUVRatio": 0.1,
+    "filteringQuality": 0,
+    "useExponentialShadowMap": false,
+    "useBlurExponentialShadowMap": false,
+    "useCloseExponentialShadowMap": false,
+    "useBlurCloseExponentialShadowMap": false,
+    "usePoissonSampling": false,
+    "depthScale": 50,
+    "blurBoxOffset": 1,
+    "blurKernel": 1,
+    "blurScale": 2,
+    "useKernelBlur": false,
+    "renderList": [
+        "32ac55e7-579a-4224-8936-55d561884744",
+        "c04fac55-2089-4c99-bb08-39044d112145"
+    ],
+    "refreshRate": 1
+}

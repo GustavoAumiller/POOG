@@ -26,7 +26,6 @@ export default class SceneComponent implements IScript {
 
     public addXp(amount: number): void {
         this.statsP.xp += amount;
-        console.log(`+${amount} XP (${this.statsP.xp}/${this.statsP.xpToNextLevel})`);
         if (this.statsP.xp >= this.statsP.xpToNextLevel) {
             this.levelUp();
         }
@@ -36,7 +35,6 @@ export default class SceneComponent implements IScript {
         this.statsP.xp -= this.statsP.xpToNextLevel;
         this.statsP.level += 1;
         this.statsP.xpToNextLevel = Math.floor(this.statsP.xpToNextLevel * 1.5);
-        console.log(`🎉 Nível ${this.statsP.level}!`);
         GameState.isPaused = true;
         this.showUpgradeScreen();
     }
@@ -147,7 +145,6 @@ export default class SceneComponent implements IScript {
         this.lastDamageTime = now;
         this.statsP.hp -= amount;
         this.updateHpUI();
-        console.log("Player HP:", this.statsP.hp);
 
         if (this.statsP.hp <= 0) {
             this.triggerGameOver();
