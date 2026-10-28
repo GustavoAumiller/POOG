@@ -8,6 +8,19 @@
     "orthoRight": 137.84880733812375,
     "orthoTop": 131.43980701962624,
     "orthoBottom": -214.06341271095798,
+    "position": [
+        100,
+        200,
+        100
+    ],
+    "direction": [
+        -2.6599999999999957,
+        -3.64,
+        3.699999999999992
+    ],
+    "range": 1.7976931348623157e+308,
+    "intensityMode": 0,
+    "radius": 0.00001,
     "diffuse": [
         0.48999999999999955,
         1,
@@ -20,29 +33,31 @@
     ],
     "falloffType": 0,
     "intensity": 3.432499999999996,
-    "range": 1.7976931348623157e+308,
-    "intensityMode": 0,
-    "radius": 0.00001,
     "_renderPriority": 0,
     "shadowEnabled": true,
     "excludeWithLayerMask": 0,
     "includeOnlyWithLayerMask": 0,
     "lightmapMode": 0,
-    "position": [
-        100,
-        200,
-        100
-    ],
-    "direction": [
-        -2.6599999999999957,
-        -3.64,
-        3.699999999999992
-    ],
     "name": "sun",
     "id": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
     "state": "",
     "metadata": {
-        "refreshRate": 1
+        "refreshRate": 1,
+        "volumetricLighting": {
+            "enabled": false,
+            "volumeIntensity": 1,
+            "anisotropy": 0.35,
+            "useCustomColor": false,
+            "color": [
+                1,
+                1,
+                1
+            ],
+            "castVolumetricShadows": false,
+            "shadowDarkness": 1,
+            "rangeMultiplier": 1,
+            "priority": 0
+        }
     },
     "uniqueId": 1711817431327,
     "type": 1,

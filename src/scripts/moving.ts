@@ -1,4 +1,4 @@
-import { KeyboardEventTypes, Vector3, Mesh, AbstractMesh } from "@babylonjs/core";
+import { Vector3, Mesh, AbstractMesh } from "@babylonjs/core";
 import { IScript } from "babylonjs-editor-tools";
 import { Projectile } from "./projectile";
 import { PLAYER } from "../entities/player";
@@ -7,6 +7,7 @@ import { getRandomUpgrades, Upgrade } from "../entities/upgrade";
 import { getWeapon } from "../entities/guns";
 import EnemySpawner from "./EnemySpawner";
 import {AdvancedDynamicTexture, Rectangle, TextBlock }  from "@babylonjs/gui";
+import type Camera from "./camera";
 
 const inputMap: { [key: string]: boolean } = {};
 
@@ -22,6 +23,8 @@ export default class SceneComponent implements IScript {
     private ui!: AdvancedDynamicTexture;
     private timerText!: TextBlock;
     private gameTime = 0;
+    private modelYawOffset = 0; //mudar caso a camera esteja apontado para lugar errado
+    private pointerWasLocked = false; // verifica se o mouse esta travado
 
 
     public addXp(amount: number): void {
@@ -42,6 +45,7 @@ export default class SceneComponent implements IScript {
     private showUpgradeScreen(): void {
         const existing = document.getElementById("upgrade-screen");
         if (existing) return;
+        this.unlockPointer();
 
         const options = getRandomUpgrades(3, this.statsP.weapons);
 
@@ -117,7 +121,7 @@ export default class SceneComponent implements IScript {
                 if (this.statsP.xp >= this.statsP.xpToNextLevel) {
                     this.levelUp();
                 } else {
-                    GameState.isPaused = false;
+                    this.resumeGame();
                 }
             });
 
@@ -160,6 +164,7 @@ export default class SceneComponent implements IScript {
     private showGameOverScreen(): void {
         const existing = document.getElementById("game-over-screen");
         if (existing) return;
+        this.unlockPointer();
 
         const screen = document.createElement("div");
         screen.id = "game-over-screen";
@@ -201,42 +206,81 @@ export default class SceneComponent implements IScript {
 
     public constructor(public mesh: Mesh) {}
 
+    private getCamera(): Camera | undefined {
+        return this.mesh.getScene().activeCamera?.metadata?.cameraComponent;
+    }
+
+    //trava o ponteiro para a camera seguir o movimento do mouse
+    private lockPointer(): void {
+        const canvas = this.mesh.getScene().getEngine().getRenderingCanvas();
+        canvas?.focus();
+        Promise.resolve(canvas?.requestPointerLock()).catch(() => {});
+    }
+
+        private unlockPointer(): void {
+        if (document.pointerLockElement) document.exitPointerLock();
+    }
+ 
+    //metodos comum para pausar e despausar o jogo travando e destravando o mouse 
+    private pauseGame(): void {
+        if (GameState.isPaused || GameState.isGameOver) return;
+        GameState.isPaused = true;
+        for (const k in inputMap) inputMap[k] = false;
+        this.togglePauseScreen(true);
+        this.unlockPointer();
+    }
+ 
+    private resumeGame(): void {
+        GameState.isPaused = false;
+        this.togglePauseScreen(false);
+        this.lockPointer();
+    }
+
+
+
     public onStart(): void {
+        GameState.isPaused = true;
         this.mesh.metadata = this.mesh.metadata ?? {};
         this.mesh.metadata.playerComponent = this;
 
         const scene = this.mesh.getScene();
         const canvas = scene.getEngine().getRenderingCanvas();
 
-        if (scene.activeCamera) {
-            scene.activeCamera.detachControl();
-        }
-
         if (canvas) {
             canvas.setAttribute("tabindex", "1");
             canvas.focus();
         }
 
-        document.addEventListener("keydown", (e) => {
-            const key = e.code;
+        if (this.mesh.rotationQuaternion) {
+            this.mesh.rotation = this.mesh.rotationQuaternion.toEulerAngles();
+            this.mesh.rotationQuaternion = null;
+        }
 
-            if (key === "Escape") {
-                if (!GameState.isGameOver && !document.getElementById("upgrade-screen")) {
-                    GameState.isPaused = !GameState.isPaused;
-                    this.togglePauseScreen(GameState.isPaused);
-                }
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Escape") {
+                this.pauseGame();
                 return;
             }
-
             if (!GameState.isPaused && !GameState.isGameOver) {
-                inputMap[key] = true;
+                inputMap[e.code] = true;
             }
         });
+
+        document.addEventListener("pointerlockchange", () => {
+            if (document.pointerLockElement === canvas) {
+                this.pointerWasLocked = true;       // a trava foi concedida
+            } else if (this.pointerWasLocked) {
+                this.pointerWasLocked = false;      // o navegador tirou a trava (Esc)
+                this.pauseGame();
+            }
+        });
+
         this.ui = AdvancedDynamicTexture.CreateFullscreenUI("UI",true,this.mesh.getScene());
 
         document.addEventListener("keyup", (e) => {
             inputMap[e.code] = false;
         });
+
         this.timerText = new TextBlock();
 
         this.timerText.text = "00:00";
@@ -269,7 +313,9 @@ export default class SceneComponent implements IScript {
         hpBg.linkWithMesh(this.mesh);
         hpBg.linkOffsetY = -100;
         this.updateHpUI();
+        this.showStartScreen();
     }
+    
     private updateHpUI(): void {
 
         const percent = this.statsP.hp / this.statsP.maxHp;
@@ -283,7 +329,44 @@ export default class SceneComponent implements IScript {
             } else {
                 this.hpBar.background = "red";
             }
-        }
+    }
+
+    private showStartScreen(): void {
+        const screen = document.createElement("div");
+        screen.id = "start-screen";
+        screen.style.cssText = `
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: sans-serif;
+            color: white;
+        `;
+        screen.innerHTML = `
+            <h1 style="font-size: 4rem; margin-bottom: 2rem;">POOG</h1>
+            <button id="start-btn" style="
+                padding: 1rem 2.5rem;
+                font-size: 1.2rem;
+                background: #e74c3c;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            ">Iniciar</button>
+        `;
+        document.body.appendChild(screen);
+ 
+        document.getElementById("start-btn")?.addEventListener("click", () => {
+            screen.remove();
+            this.resumeGame();
+        });
+    }
+
 
     private togglePauseScreen(show: boolean): void {
         const existing = document.getElementById("pause-screen");
@@ -306,9 +389,20 @@ export default class SceneComponent implements IScript {
             `;
             screen.innerHTML = `
                 <h1 style="font-size: 3rem;">PAUSADO</h1>
-                <p style="font-size: 1.2rem; margin-top: 1rem;">Pressione ESC para continuar</p>
+                <button id="resume-btn" style="
+                    margin-top: 1.5rem;
+                    padding: 1rem 2.5rem;
+                    font-size: 1.2rem;
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                ">Continuar</button>
             `;
             document.body.appendChild(screen);
+            document.getElementById("resume-btn")?.addEventListener("click", () => this.resumeGame());
+
         } else {
             existing?.remove();
         }
@@ -360,6 +454,7 @@ export default class SceneComponent implements IScript {
     }
 
     public onUpdate(): void {
+        if (GameState.isPaused || GameState.isGameOver) return;
         const dt2 = this.mesh.getScene().getEngine().getDeltaTime();
 
         this.gameTime += dt2;
@@ -370,8 +465,6 @@ export default class SceneComponent implements IScript {
         const seconds = totalSeconds % 60;
 
         this.timerText.text =`${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
-        if (GameState.isPaused || GameState.isGameOver) return;
 
         const dt = this.mesh.getScene().getEngine().getDeltaTime();
         const target = this.findClosestEnemy();
@@ -415,9 +508,30 @@ export default class SceneComponent implements IScript {
 
         this.checkEnemyCollisions();
 
-        if (inputMap["ArrowUp"] || inputMap["KeyW"]) this.mesh.moveWithCollisions(new Vector3(0, 0, this.speed));
-        if (inputMap["ArrowDown"] || inputMap["KeyS"]) this.mesh.moveWithCollisions(new Vector3(0, 0, -this.speed));
-        if (inputMap["ArrowLeft"] || inputMap["KeyA"]) this.mesh.moveWithCollisions(new Vector3(-this.speed, 0, 0));
-        if (inputMap["ArrowRight"] || inputMap["KeyD"]) this.mesh.moveWithCollisions(new Vector3(this.speed, 0, 0));
+        // movimento relativo ao giro da camera
+        const camYaw = this.getCamera()?.getYaw() ?? 0;
+        const forward = new Vector3(Math.sin(camYaw), 0, Math.cos(camYaw));
+        const right   = new Vector3(Math.cos(camYaw), 0, -Math.sin(camYaw));
+        const move = Vector3.Zero();
+ 
+        if (inputMap["ArrowUp"]    || inputMap["KeyW"]) move.addInPlace(forward);
+        if (inputMap["ArrowDown"]  || inputMap["KeyS"]) move.subtractInPlace(forward);
+        if (inputMap["ArrowRight"] || inputMap["KeyD"]) move.addInPlace(right);
+        if (inputMap["ArrowLeft"]  || inputMap["KeyA"]) move.subtractInPlace(right);
+ 
+        if (move.lengthSquared() > 0) {
+            move.normalize().scaleInPlace(this.speed);
+            this.mesh.moveWithCollisions(move);
+        }
+
+        if (target) {
+            const dx = target.position.x - this.mesh.position.x;
+            const dz = target.position.z - this.mesh.position.z;
+            this.mesh.rotation.y = Math.atan2(dx, dz) + this.modelYawOffset;
+        } else if (move.lengthSquared() > 0) {
+            this.mesh.rotation.y = Math.atan2(move.x, move.z) + this.modelYawOffset;
+        }
+
+        this.getCamera()?.follow(this.mesh.position);
     }
 }

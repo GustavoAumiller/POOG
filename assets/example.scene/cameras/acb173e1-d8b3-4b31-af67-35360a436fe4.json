@@ -19,8 +19,10 @@
         0
     ],
     "speed": 500,
+    "inertia": 0.9,
+    "mode": 0,
     "position": [
-        1.1368683772161691e-13,
+        0.02,
         566.6623376701317,
         -756.6639142859483
     ],
@@ -32,43 +34,48 @@
     "fov": 0.8,
     "projectionPlaneTilt": 0,
     "minZ": 1,
-    "maxZ": 1000000,
-    "inertia": 0,
-    "mode": 0,
+    "maxZ": 10000,
     "layerMask": 268435455,
     "fovMode": 0,
     "cameraRigMode": 0,
     "ignoreCameraMaxZ": false,
-    "name": "camera",
-    "id": "3ee0f345-7bea-4f59-a657-28c90a7d5e74",
+    "name": "New Free Camera",
+    "id": "acb173e1-d8b3-4b31-af67-35360a436fe4",
     "state": "",
     "metadata": {
         "sensorSize": 36,
         "focalLength": 42.574003560703986,
-        "parentId": 1715251501025
+        "scripts": [
+            {
+                "enabled": true,
+                "key": "scripts/camera.ts",
+                "_id": "f3c856ce-1670-470f-bd30-4b38488be37e",
+                "debugOnly": false
+            }
+        ]
     },
-    "uniqueId": 20,
+    "uniqueId": 1793213309848,
     "type": "UniversalCamera",
     "inputsmgr": {
         "FreeCameraKeyboardMoveInput": {
             "tags": null,
             "keysUp": [
-                87
+                38
             ],
             "keysUpward": [
-                69
+                33
             ],
             "keysDown": [
-                83
+                40
             ],
             "keysDownward": [
-                81
+                34
             ],
             "keysLeft": [
-                65
+                37
             ],
             "keysRight": [
-                68
+                39
             ],
             "rotationSpeed": 0.5,
             "keysRotateLeft": [],

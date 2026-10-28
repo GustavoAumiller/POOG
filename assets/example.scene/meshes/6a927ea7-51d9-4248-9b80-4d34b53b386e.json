@@ -164,6 +164,10 @@
                 0
             ],
             "dithering": false,
+            "rawHdrOutput": false,
+            "cloudiness": 0,
+            "pointsCloud": false,
+            "fillMode": 0,
             "id": "b2346078-7465-4c63-8877-44b542584898",
             "name": "sky",
             "metadata": {},
@@ -194,8 +198,6 @@
             "pointSize": 1,
             "zOffset": 0,
             "zOffsetUnits": 0,
-            "pointsCloud": false,
-            "fillMode": 0,
             "_isVertexOutputInvariant": false,
             "stencil": {
                 "tags": null,

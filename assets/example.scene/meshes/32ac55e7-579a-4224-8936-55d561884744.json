@@ -76,7 +76,8 @@
                     {
                         "enabled": true,
                         "key": "scripts/EnemyIA.ts",
-                        "_id": "c2a55ae3-0fe1-4b18-a3f3-a5c4f4b836c3"
+                        "_id": "c2a55ae3-0fe1-4b18-a3f3-a5c4f4b836c3",
+                        "debugOnly": false
                     }
                 ],
                 "customMetadata": {
@@ -171,7 +172,8 @@
             {
                 "enabled": true,
                 "key": "scripts/EnemyIA.ts",
-                "_id": "c2a55ae3-0fe1-4b18-a3f3-a5c4f4b836c3"
+                "_id": "c2a55ae3-0fe1-4b18-a3f3-a5c4f4b836c3",
+                "debugOnly": false
             }
         ],
         "customMetadata": {
