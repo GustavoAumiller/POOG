@@ -2,6 +2,7 @@ import { Vector3, Mesh, AbstractMesh } from "@babylonjs/core";
 import { IScript } from "babylonjs-editor-tools";
 import { Projectile } from "./projectile";
 import { PLAYER } from "../entities/player";
+import { PlayerModel } from "../entities/playerModel";
 import { GameState } from "../gameState";
 import { getRandomUpgrades, Upgrade } from "../entities/upgrade";
 import { getWeapon } from "../entities/guns";
@@ -25,6 +26,7 @@ export default class SceneComponent implements IScript {
     private gameTime = 0;
     private modelYawOffset = 0; //mudar caso a camera esteja apontado para lugar errado
     private pointerWasLocked = false; // verifica se o mouse esta travado
+    private playerModel?: PlayerModel;
 
 
     public addXp(amount: number): void {
@@ -255,6 +257,8 @@ export default class SceneComponent implements IScript {
             this.mesh.rotation = this.mesh.rotationQuaternion.toEulerAngles();
             this.mesh.rotationQuaternion = null;
         }
+
+        this.playerModel = new PlayerModel(this.mesh);
 
         document.addEventListener("keydown", (e) => {
             if (e.code === "Escape") {
@@ -519,10 +523,13 @@ export default class SceneComponent implements IScript {
         if (inputMap["ArrowRight"] || inputMap["KeyD"]) move.addInPlace(right);
         if (inputMap["ArrowLeft"]  || inputMap["KeyA"]) move.subtractInPlace(right);
  
+        const previousPosition = this.mesh.position.clone();
         if (move.lengthSquared() > 0) {
             move.normalize().scaleInPlace(this.speed);
             this.mesh.moveWithCollisions(move);
         }
+
+        this.playerModel?.update(dt / 1000, Vector3.Distance(previousPosition, this.mesh.position));
 
         if (target) {
             const dx = target.position.x - this.mesh.position.x;
@@ -533,5 +540,10 @@ export default class SceneComponent implements IScript {
         }
 
         this.getCamera()?.follow(this.mesh.position);
+    }
+
+    public onStop(): void {
+        this.playerModel?.dispose();
+        this.playerModel = undefined;
     }
 }
