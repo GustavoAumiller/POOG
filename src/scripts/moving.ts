@@ -8,10 +8,16 @@ import { getRandomUpgrades, Upgrade } from "../entities/upgrade";
 import { getWeapon } from "../entities/guns";
 import EnemySpawner from "./EnemySpawner";
 import {AdvancedDynamicTexture, Rectangle, TextBlock }  from "@babylonjs/gui";
+import { CameraManager } from "./cameraManager";
 import type Camera from "./camera";
 
 const inputMap: { [key: string]: boolean } = {};
 
+const CAMERA_KEYS: { [code: string]: number } = {
+    Digit1: 1, Numpad1: 1,
+    Digit2: 2, Numpad2: 2,
+    Digit3: 3, Numpad3: 3,
+};
 
 export default class SceneComponent implements IScript {
     public statsP = PLAYER.player1;
@@ -208,9 +214,6 @@ export default class SceneComponent implements IScript {
 
     public constructor(public mesh: Mesh) {}
 
-    private getCamera(): Camera | undefined {
-        return this.mesh.getScene().activeCamera?.metadata?.cameraComponent;
-    }
 
     //trava o ponteiro para a camera seguir o movimento do mouse
     private lockPointer(): void {
@@ -265,6 +268,14 @@ export default class SceneComponent implements IScript {
                 this.pauseGame();
                 return;
             }
+
+            const cameraSlot = CAMERA_KEYS[e.code];
+            
+            if (cameraSlot) {
+                if (!GameState.isPaused && !GameState.isGameOver) CameraManager.select(cameraSlot);
+                return;
+            }
+
             if (!GameState.isPaused && !GameState.isGameOver) {
                 inputMap[e.code] = true;
             }
@@ -513,7 +524,7 @@ export default class SceneComponent implements IScript {
         this.checkEnemyCollisions();
 
         // movimento relativo ao giro da camera
-        const camYaw = this.getCamera()?.getYaw() ?? 0;
+        const camYaw = CameraManager.getYaw();
         const forward = new Vector3(Math.sin(camYaw), 0, Math.cos(camYaw));
         const right   = new Vector3(Math.cos(camYaw), 0, -Math.sin(camYaw));
         const move = Vector3.Zero();
@@ -539,7 +550,7 @@ export default class SceneComponent implements IScript {
             this.mesh.rotation.y = Math.atan2(move.x, move.z) + this.modelYawOffset;
         }
 
-        this.getCamera()?.follow(this.mesh.position);
+        CameraManager.update(this.mesh.position);
     }
 
     public onStop(): void {

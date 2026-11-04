@@ -39,7 +39,7 @@
     "fovMode": 0,
     "cameraRigMode": 0,
     "ignoreCameraMaxZ": false,
-    "name": "New Free Camera",
+    "name": "Camera Orbit",
     "id": "acb173e1-d8b3-4b31-af67-35360a436fe4",
     "state": "",
     "metadata": {

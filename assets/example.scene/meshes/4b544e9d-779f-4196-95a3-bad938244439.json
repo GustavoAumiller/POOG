@@ -61,11 +61,11 @@
             "isBlocker": false,
             "sideOrientation": 1,
             "isUnIndexed": false,
-            "geometryUniqueId": 58,
-            "geometryId": "b5b36601-498f-42c1-9664-f872eafd3b0c",
+            "geometryUniqueId": 59,
+            "geometryId": "7ce2958c-a5bf-4034-9fbc-0793da2b3b19",
             "subMeshes": null,
-            "materialUniqueId": 1793216204975,
-            "materialId": "816f2139-c47a-4052-b8ef-83106ad181e3",
+            "materialUniqueId": 1793753589594,
+            "materialId": "19cd18d0-8289-4f43-8c7b-6048b4f3e31e",
             "metadata": {
                 "isCollisionMesh": true,
                 "parentId": 1782678593360
@@ -83,7 +83,7 @@
                 0
             ],
             "applyFog": true,
-            "delayLoadingFile": "assets/example.scene/geometries/b5b36601-498f-42c1-9664-f872eafd3b0c.babylonbinarymeshdata",
+            "delayLoadingFile": "assets/example.scene/geometries/7ce2958c-a5bf-4034-9fbc-0793da2b3b19.babylonbinarymeshdata",
             "boundingBoxMaximum": [
                 0.5,
                 0.5,
