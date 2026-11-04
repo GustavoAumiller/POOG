@@ -76,12 +76,14 @@
                     {
                         "enabled": true,
                         "key": "scripts/moving.ts",
-                        "_id": "03e5e404-324c-472b-a5dc-8bd2e85c10ad"
+                        "_id": "03e5e404-324c-472b-a5dc-8bd2e85c10ad",
+                        "debugOnly": false
                     },
                     {
                         "enabled": true,
                         "key": "scripts/EnemySpawner.ts",
-                        "_id": "3d0bdb01-0ef3-45c7-b383-36d260d2228c"
+                        "_id": "3d0bdb01-0ef3-45c7-b383-36d260d2228c",
+                        "debugOnly": false
                     }
                 ]
             },
@@ -584,12 +586,14 @@
             {
                 "enabled": true,
                 "key": "scripts/moving.ts",
-                "_id": "03e5e404-324c-472b-a5dc-8bd2e85c10ad"
+                "_id": "03e5e404-324c-472b-a5dc-8bd2e85c10ad",
+                "debugOnly": false
             },
             {
                 "enabled": true,
                 "key": "scripts/EnemySpawner.ts",
-                "_id": "3d0bdb01-0ef3-45c7-b383-36d260d2228c"
+                "_id": "3d0bdb01-0ef3-45c7-b383-36d260d2228c",
+                "debugOnly": false
             }
         ]
     },

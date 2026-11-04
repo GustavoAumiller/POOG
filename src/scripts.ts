@@ -26,15 +26,19 @@ import "babylonjs-editor-tools/loading/script/preload/plugins/gui";
 import "babylonjs-editor-tools/loading/script/preload/plugins/navmesh";
 
 import * as scripts_EnemyIA from "./scripts/EnemyIA";
-import * as scripts_EnemySpawner from "./scripts/EnemySpawner";
 import * as scripts_moving from "./scripts/moving";
+import * as scripts_EnemySpawner from "./scripts/EnemySpawner";
+import * as scripts_cameraTop from "./scripts/cameraTop";
 import * as scripts_camera from "./scripts/camera";
+import * as scripts_cameraFixed from "./scripts/cameraFixed";
 
 export const scriptsMap = {
     "scripts/EnemyIA.ts": scripts_EnemyIA,
-	"scripts/EnemySpawner.ts": scripts_EnemySpawner,
 	"scripts/moving.ts": scripts_moving,
-	"scripts/camera.ts": scripts_camera
+	"scripts/EnemySpawner.ts": scripts_EnemySpawner,
+	"scripts/cameraTop.ts": scripts_cameraTop,
+	"scripts/camera.ts": scripts_camera,
+	"scripts/cameraFixed.ts": scripts_cameraFixed
 };
 
 export {

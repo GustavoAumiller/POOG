@@ -115,7 +115,13 @@
             "iblShadowsRenderPipeline": null
         },
         {
+            "cameraId": "18e3e61f-65dd-4f86-bfd8-c8f2e02d447a"
+        },
+        {
             "cameraId": "acb173e1-d8b3-4b31-af67-35360a436fe4"
+        },
+        {
+            "cameraId": "efc71897-d23c-45a6-a534-09e099072d33"
         }
     ],
     "metadata": {
@@ -152,17 +158,17 @@
         "applyGravity": false,
         "updateUpVectorFromRotation": false,
         "rotation": [
-            0.6278027420827762,
-            0.05126788001814036,
+            0.09555795912223532,
+            1.2206594224860388,
             0
         ],
         "speed": 200,
         "inertia": 0.5,
         "mode": 0,
         "position": [
-            -0.5034484993823712,
-            954.313300540855,
-            -1045.5751129169637
+            -1366.3157858210657,
+            427.4144820020608,
+            -697.794128784033
         ],
         "upVector": [
             0,

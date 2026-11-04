@@ -1,0 +1,109 @@
+{
+    "tags": null,
+    "ellipsoid": [
+        0.5,
+        1,
+        0.5
+    ],
+    "ellipsoidOffset": [
+        0,
+        0,
+        0
+    ],
+    "checkCollisions": false,
+    "applyGravity": false,
+    "updateUpVectorFromRotation": false,
+    "rotation": [
+        0.23342447663646596,
+        0,
+        0
+    ],
+    "speed": 500,
+    "inertia": 0.9,
+    "mode": 0,
+    "position": [
+        0,
+        326.06000000000154,
+        -631.63
+    ],
+    "upVector": [
+        0,
+        1,
+        0
+    ],
+    "fov": 0.8,
+    "projectionPlaneTilt": 0,
+    "minZ": 1,
+    "maxZ": 10000,
+    "layerMask": 268435455,
+    "fovMode": 0,
+    "cameraRigMode": 0,
+    "ignoreCameraMaxZ": false,
+    "name": "Camera Fixed",
+    "id": "efc71897-d23c-45a6-a534-09e099072d33",
+    "state": "",
+    "metadata": {
+        "sensorSize": 36,
+        "focalLength": 42.574003560703986,
+        "scripts": [
+            {
+                "enabled": true,
+                "key": "scripts/cameraFixed.ts",
+                "_id": "eab87e73-4d84-4fc4-b09a-3b5aa0365f2a",
+                "debugOnly": false
+            }
+        ]
+    },
+    "uniqueId": 1793749071596,
+    "type": "UniversalCamera",
+    "inputsmgr": {
+        "FreeCameraKeyboardMoveInput": {
+            "tags": null,
+            "keysUp": [
+                38
+            ],
+            "keysUpward": [
+                33
+            ],
+            "keysDown": [
+                40
+            ],
+            "keysDownward": [
+                34
+            ],
+            "keysLeft": [
+                37
+            ],
+            "keysRight": [
+                39
+            ],
+            "rotationSpeed": 0.5,
+            "keysRotateLeft": [],
+            "keysRotateRight": [],
+            "keysRotateUp": [],
+            "keysRotateDown": []
+        },
+        "FreeCameraMouseInput": {
+            "tags": null,
+            "buttons": [
+                0,
+                1,
+                2
+            ],
+            "angularSensibility": 2000
+        },
+        "FreeCameraTouchInput": {
+            "tags": null,
+            "touchAngularSensibility": 200000,
+            "touchMoveSensibility": 250
+        },
+        "FreeCameraGamepadInput": {
+            "tags": null,
+            "gamepadAngularSensibility": 200,
+            "gamepadMoveSensibility": 40
+        }
+    },
+    "animations": [],
+    "ranges": [],
+    "isEnabled": true
+}
