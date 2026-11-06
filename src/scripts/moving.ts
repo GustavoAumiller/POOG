@@ -363,7 +363,7 @@ export default class SceneComponent implements IScript {
             color: white;
         `;
         screen.innerHTML = `
-            <h1 style="font-size: 4rem; margin-bottom: 2rem;">POOG</h1>
+            <h1 style="font-size: 4rem; margin-bottom: 2rem;">Survival Arena</h1>
             <button id="start-btn" style="
                 padding: 1rem 2.5rem;
                 font-size: 1.2rem;

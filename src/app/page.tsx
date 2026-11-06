@@ -41,6 +41,7 @@ import { loadScene } from "babylonjs-editor-tools";
  * loaded objects (scene, meshes, transform nodes, lights, cameras, etc.).
  */
 import { scriptsMap } from "@/scripts";
+import { setupVisualization } from "@/scripts/visualization";
 
 export default function Home() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,9 +88,9 @@ export default function Home() {
 			quality: "high",
 		});
 
-		if (scene.activeCamera) {
-			scene.activeCamera.attachControl();
-		}
+		// Configura projeção perspectiva e as fontes de luz demonstráveis.
+		const disposeVisualization = setupVisualization(scene);
+		scene.onDisposeObservable.addOnce(disposeVisualization);
 
 		engine.runRenderLoop(() => {
 			scene.render();
