@@ -5,6 +5,8 @@ import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import type { Scene } from "@babylonjs/core/scene";
+import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
+import { createPanelTexture, getRobotPBRTextures } from "./textures";
 
 // Altere esta paleta para criar variações sem precisar de texturas externas.
 export const ROBOT_COLORS = {
@@ -28,6 +30,7 @@ export class PlayerModel {
     private readonly leftArm: TransformNode;
     private readonly rightArm: TransformNode;
     private readonly originalVisibility: boolean;
+    private readonly textures: BaseTexture[] = [];
     private elapsed = 0;
     private stride = 0;
     private walkBlend = 0;
@@ -40,15 +43,56 @@ export class PlayerModel {
         this.root.parent = player;
 
         // O modelo é desenhado em 100 unidades e ajustado à caixa local do Player.
+        const robotMaps = getRobotPBRTextures(this.scene);
         const bounds = player.getBoundingInfo().boundingBox;
         this.root.position.copyFrom(bounds.center);
         const size = bounds.maximum.subtract(bounds.minimum);
         this.root.scaling.copyFrom(size.scale(1 / 100));
 
-        const armor = this.material("armor", ROBOT_COLORS.armor);
-        const dark = this.material("dark", ROBOT_COLORS.dark);
-        const joints = this.material("joints", ROBOT_COLORS.joints);
-        const trim = this.material("trim", ROBOT_COLORS.trim);
+        const armor = this.material(
+            "armor",
+            ROBOT_COLORS.armor,
+            false,
+            robotMaps.color,
+            1,
+            1,
+            false,
+        );
+
+        armor.bumpTexture = robotMaps.normal;
+        armor.bumpTexture.level = 0.65;
+
+        armor.metallicTexture = robotMaps.orm;
+        armor.useRoughnessFromMetallicTextureGreen = true;
+        armor.useMetallnessFromMetallicTextureBlue = true;
+
+        armor.metallic = 1;
+        armor.roughness = 1;
+        const dark = this.material(
+            "dark",
+            ROBOT_COLORS.dark,
+            false,
+            createPanelTexture(this.scene, ROBOT_COLORS.dark, false),
+            0.58,
+            0.48,
+        );
+        const joints = this.material(
+            "joints",
+            ROBOT_COLORS.joints,
+            false,
+            undefined,
+            0.82,
+            0.32,
+        );
+        const trim = this.material(
+            "trim",
+            ROBOT_COLORS.trim,
+            false,
+            createPanelTexture(this.scene, ROBOT_COLORS.trim, false),
+            0.72,
+            0.3,
+        );
+
         const light = this.material("light", ROBOT_COLORS.light, true);
 
         this.torso = this.pivot("torso", this.root, 0, 0, 0);
@@ -87,6 +131,14 @@ export class PlayerModel {
         const muzzle = this.cylinder("muzzle", this.rightArm, 2, 5, [0, -28, 43], light);
         muzzle.rotation.x = Math.PI / 2;
 
+        
+        this.mergePartsByMaterial(this.torso);
+        this.mergePartsByMaterial(this.leftLeg);
+        this.mergePartsByMaterial(this.rightLeg);
+        this.mergePartsByMaterial(this.leftArm);
+        this.mergePartsByMaterial(this.rightArm);
+
+
         // isVisible oculta apenas o cubo; setEnabled(false) desativaria os scripts e filhos.
         player.isVisible = false;
         for (const sceneLight of this.scene.lights) {
@@ -102,16 +154,106 @@ export class PlayerModel {
         player.onDisposeObservable.addOnce(() => this.dispose());
     }
 
-    private material(name: string, hex: string, emissive = false): PBRMaterial {
+    private mergePartsByMaterial(parent: TransformNode): void {
+        const groups = new Map<PBRMaterial, Mesh[]>();
+
+        for (const part of this.parts) {
+            if (part.parent !== parent || !(part.material instanceof PBRMaterial)) {
+                continue;
+            }
+
+            const group = groups.get(part.material) ?? [];
+            group.push(part);
+            groups.set(part.material, group);
+        }
+
+        const removedParts = new Set<Mesh>();
+        const mergedParts: Mesh[] = [];
+
+        for (const [material, meshes] of groups) {
+            if (meshes.length < 2) continue;
+
+            // Atualiza as matrizes antes de preservar os transforms.
+            parent.computeWorldMatrix(true);
+
+            for (const mesh of meshes) {
+                mesh.computeWorldMatrix(true);
+                mesh.setParent(null);
+            }
+
+            const merged = Mesh.MergeMeshes(
+                meshes,
+                true,
+                true,
+            );
+
+            if (!merged) {
+                // Restaura a hierarquia caso a união falhe.
+                for (const mesh of meshes) {
+                    if (!mesh.isDisposed()) {
+                        mesh.setParent(parent);
+                    }
+                }
+                continue;
+            }
+
+            merged.name = `robot-merged-${parent.name}-${mergedParts.length}`;
+            merged.setParent(parent);
+            merged.material = material;
+            merged.isPickable = false;
+            merged.checkCollisions = false;
+            merged.receiveShadows = true;
+
+            for (const mesh of meshes) {
+                removedParts.add(mesh);
+            }
+
+            mergedParts.push(merged);
+        }
+
+        // Atualiza a lista utilizada pelo gerenciamento de sombras e descarte.
+        const remainingParts = this.parts.filter(
+            part => !removedParts.has(part),
+        );
+
+        this.parts.splice(
+            0,
+            this.parts.length,
+            ...remainingParts,
+            ...mergedParts,
+        );
+    }
+
+    private material(
+        name: string,
+        hex: string,
+        emissive = false,
+        texture?: BaseTexture,
+        metallic = 0.25,
+        roughness = 0.7,
+        trackTexture = true,
+    ): PBRMaterial {
         const material = new PBRMaterial(`robot-${name}`, this.scene);
         const color = Color3.FromHexString(hex).toLinearSpace();
+
         material.albedoColor = color;
-        material.metallic = 0.25;
-        material.roughness = 0.7;
+        material.metallic = metallic;
+        material.roughness = roughness;
+
+        if (texture) {
+            material.albedoTexture = texture;
+            material.albedoColor = Color3.White();
+
+            if (trackTexture) {
+                this.textures.push(texture);
+            }
+        }
+
         if (emissive) {
             material.emissiveColor = color;
             material.unlit = true;
         }
+
         this.materials.push(material);
         return material;
     }
@@ -196,6 +338,7 @@ export class PlayerModel {
         }
         this.root.dispose();
         for (const material of this.materials) material.dispose();
+        for (const texture of this.textures) texture.dispose();
         if (!this.player.isDisposed()) {
             this.player.isVisible = this.originalVisibility;
             for (const shadows of this.originalShadowCasters) shadows.addShadowCaster(this.player, false);

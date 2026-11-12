@@ -7,7 +7,7 @@ import { Engine } from "@babylonjs/core/Engines/engine";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { SceneLoaderFlags } from "@babylonjs/core/Loading/sceneLoaderFlags";
 import { HavokPlugin } from "@babylonjs/core/Physics/v2/Plugins/havokPlugin";
-
+import { applyGroundTexture } from "@/entities/textures";
 import HavokPhysics from "@babylonjs/havok";
 
 import "@babylonjs/core/Loading/loadingScreen";
@@ -90,6 +90,7 @@ export default function Home() {
 
 		// Configura projeção perspectiva e as fontes de luz demonstráveis.
 		const disposeVisualization = setupVisualization(scene);
+		applyGroundTexture(scene, 40);
 		scene.onDisposeObservable.addOnce(disposeVisualization);
 
 		engine.runRenderLoop(() => {

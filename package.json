@@ -36,9 +36,9 @@
 	},
 	"dependencies": {
 		"@babylonjs/addons": "9.12.1",
-		"@babylonjs/core": "9.12.1",
+		"@babylonjs/core": "^9.12.1",
 		"@babylonjs/gui": "9.12.1",
-		"@babylonjs/havok": "1.3.12",
+		"@babylonjs/havok": "^1.3.12",
 		"@babylonjs/materials": "9.12.1",
 		"@recast-navigation/core": "^0.43.1",
 		"@recast-navigation/generators": "^0.43.1",

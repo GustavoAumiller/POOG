@@ -30,9 +30,13 @@ export default class SceneComponent implements IScript {
     private ui!: AdvancedDynamicTexture;
     private timerText!: TextBlock;
     private gameTime = 0;
+    private lastDisplayedSecond = -1;
     private modelYawOffset = 0; //mudar caso a camera esteja apontado para lugar errado
     private pointerWasLocked = false; // verifica se o mouse esta travado
     private playerModel?: PlayerModel;
+    private targetUpdateTimer = 0;
+    private targetUpdateInterval = 100;
+    private currentTarget: AbstractMesh | null = null;
 
 
     public addXp(amount: number): void {
@@ -422,7 +426,20 @@ export default class SceneComponent implements IScript {
             existing?.remove();
         }
     }
+    private updateTarget(dt: number): AbstractMesh | null {
+        this.targetUpdateTimer += dt;
 
+        if (
+            this.targetUpdateTimer >= this.targetUpdateInterval ||
+            !this.currentTarget ||
+            this.currentTarget.isDisposed()
+        ) {
+            this.targetUpdateTimer = 0;
+            this.currentTarget = this.findClosestEnemy();
+        }
+
+        return this.currentTarget;
+    }
     private findClosestEnemy(): AbstractMesh | null {
         const enemies = EnemySpawner.enemies;
         if (enemies.length === 0) return null;
@@ -449,9 +466,11 @@ export default class SceneComponent implements IScript {
     }
 
     private checkEnemyCollisions(): void {
-        const enemies = EnemySpawner.enemies;
+        if (Date.now() - this.lastDamageTime < this.damageCooldown) {
+            return;
+        }
 
-        for (const enemy of enemies) {
+        for (const enemy of EnemySpawner.enemies) {
 
             const dx = this.mesh.position.x - enemy.position.x;
             const dz = this.mesh.position.z - enemy.position.z;
@@ -470,19 +489,26 @@ export default class SceneComponent implements IScript {
 
     public onUpdate(): void {
         if (GameState.isPaused || GameState.isGameOver) return;
-        const dt2 = this.mesh.getScene().getEngine().getDeltaTime();
 
-        this.gameTime += dt2;
+        const dt = this.mesh.getScene().getEngine().getDeltaTime();
+
+        this.gameTime += dt;
 
         const totalSeconds = Math.floor(this.gameTime / 1000);
 
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
+        if (totalSeconds !== this.lastDisplayedSecond) {
+            this.lastDisplayedSecond = totalSeconds;
 
-        this.timerText.text =`${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
 
-        const dt = this.mesh.getScene().getEngine().getDeltaTime();
-        const target = this.findClosestEnemy();
+            this.timerText.text =
+                `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+
+        const target = this.updateTarget(dt);
+
+        // O restante do onUpdate permanece igual.
 
         for (const weaponId of this.statsP.weapons) {
             if (this.weaponTimers[weaponId] === undefined) {
@@ -517,10 +543,10 @@ export default class SceneComponent implements IScript {
             }
         }
         
-        this.projectiles = this.projectiles.filter(p =>
-            p.update(EnemySpawner.enemies)
+        this.projectiles = Projectile.updateAll(
+            this.projectiles,
+            EnemySpawner.enemies
         );
-
         this.checkEnemyCollisions();
 
         // movimento relativo ao giro da camera
