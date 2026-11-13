@@ -5,12 +5,73 @@ import { ENEMIES, EnemyStats, getDamageMultiplier } from "../entities/enemy";
 import { GameState } from "../gameState";
 import EnemySpawner from "./EnemySpawner";
 import {AdvancedDynamicTexture, Rectangle} from "@babylonjs/gui";
+import type { Scene } from "@babylonjs/core/scene";
+import type { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
+
+const playerCache = new WeakMap<Scene, AbstractMesh>();
+
+function getPlayer(scene: Scene): AbstractMesh | null {
+    let player = playerCache.get(scene);
+
+    if (!player || player.isDisposed()) {
+        const foundPlayer = scene.getMeshByName("Player");
+
+        if (!foundPlayer) {
+            return null;
+        }
+
+        player = foundPlayer;
+        playerCache.set(scene, player);
+    }
+
+    return player;
+}
+const playerExtentCache = new WeakMap<Scene, number>();
+
+function getPlayerExtent(scene: Scene, player: AbstractMesh): number {
+    let extent = playerExtentCache.get(scene);
+
+    if (extent === undefined) {
+        player.computeWorldMatrix(true);
+
+        extent = player.getBoundingInfo().boundingBox.extendSizeWorld.x;
+
+        playerExtentCache.set(scene, extent);
+    }
+
+    return extent;
+}
+
+const enemyHealthUIs = new WeakMap<Scene, AdvancedDynamicTexture>();
+
+function getEnemyHealthUI(scene: Scene): AdvancedDynamicTexture {
+    let ui = enemyHealthUIs.get(scene);
+
+    if (!ui) {
+        ui = AdvancedDynamicTexture.CreateFullscreenUI(
+            "EnemyHealthUI",
+            true,
+            scene,
+        );
+
+        enemyHealthUIs.set(scene, ui);
+
+        scene.onDisposeObservable.addOnce(() => {
+            ui?.dispose();
+            enemyHealthUIs.delete(scene);
+        });
+    }
+
+    return ui;
+}
 export default class EnemyIA implements IScript {
 
     private stats: EnemyStats = { ...ENEMIES.slime };
     private lastContactDamageTime = 0;
     private contactDamageCooldown = 1000;
     private dead = false;
+    private enemyExtentX = 0;
+    private movementDirection = Vector3.Zero();
     private hpBg!: Rectangle;
     private hpBar!: Rectangle;
 
@@ -24,26 +85,31 @@ export default class EnemyIA implements IScript {
         if (customStats) {
             this.stats = { ...customStats };
         }
-        const ui = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this.mesh.computeWorldMatrix(true);
+
+        this.enemyExtentX =
+            this.mesh.getBoundingInfo().boundingBox.extendSizeWorld.x;
+        const ui = getEnemyHealthUI(this.mesh.getScene());
 
         this.hpBg = new Rectangle();
         this.hpBg.width = "115px";
         this.hpBg.height = "10px";
-        this.hpBg.thickness = 1.2;
-        this.hpBg.color = "white";
+        this.hpBg.thickness = 0;
+        this.hpBg.color = "black";
         this.hpBg.background = "black";
 
 
         ui.addControl(this.hpBg);
 
         this.hpBar = new Rectangle();
+
+        this.hpBg.addControl(this.hpBar);
+
         this.hpBar.width = "100%";
         this.hpBar.height = "100%";
         this.hpBar.thickness = 0;
         this.hpBar.background = "red";
         this.hpBar.horizontalAlignment = Rectangle.HORIZONTAL_ALIGNMENT_LEFT;
-
-        this.hpBg.addControl(this.hpBar);
 
         this.hpBg.linkWithMesh(this.mesh);
         this.hpBg.linkOffsetY = -20;
@@ -74,7 +140,7 @@ export default class EnemyIA implements IScript {
         if (this.stats.hp <= 0) {
             this.dead = true;
             const index = EnemySpawner.enemies.indexOf(this.mesh);
-            const player = this.mesh.getScene().getMeshByName("Player");
+            const player = getPlayer(this.mesh.getScene());
             const playerComponent = player?.metadata?.playerComponent;
 
             if (playerComponent && typeof playerComponent.addXp === "function") {
@@ -88,6 +154,7 @@ export default class EnemyIA implements IScript {
         }
     }
 
+
     public onUpdate(): void {
         if (this.dead || this.mesh.isDisposed()) {
             return;
@@ -95,26 +162,34 @@ export default class EnemyIA implements IScript {
 
         if (GameState.isPaused || GameState.isGameOver) return;
 
-        const player = this.mesh.getScene().getMeshByName("Player");
+        const scene = this.mesh.getScene();
+        const player = getPlayer(scene);
+
         if (!player) return;
 
         if (this.mesh.intersectsMesh(player, false)) {
             this.takedmg(1, false);
         }
 
-        const direction = player.position.subtract(this.mesh.position);
-        direction.y = 0;
+        const dx = player.position.x - this.mesh.position.x;
+        const dz = player.position.z - this.mesh.position.z;
 
-        const distance = direction.length();
+        const distanceSquared = dx * dx + dz * dz;
 
-        const enemyExtent = this.mesh.getBoundingInfo().boundingBox.extendSizeWorld;
-        const playerExtent = player.getBoundingInfo().boundingBox.extendSizeWorld;
+        const playerExtentX = getPlayerExtent(scene, player);
+        const stopDistance = this.enemyExtentX + playerExtentX;
 
-        const stopDistance = enemyExtent.x + playerExtent.x;
+        if (distanceSquared > stopDistance * stopDistance) {
+            const distance = Math.sqrt(distanceSquared);
 
-        if (distance > stopDistance) {
-            direction.normalize();
-            this.mesh.moveWithCollisions(direction.scale(this.stats.speed));
+            this.movementDirection.set(
+                (dx / distance) * this.stats.speed,
+                0,
+                (dz / distance) * this.stats.speed
+            );
+
+            this.mesh.moveWithCollisions(this.movementDirection);
         }
     }
+
 }

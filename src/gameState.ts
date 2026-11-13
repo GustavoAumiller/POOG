@@ -1,4 +1,4 @@
 export const GameState = {
-    isPaused: false,
+    isPaused: true,
     isGameOver: false,
 };

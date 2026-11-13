@@ -1,6 +1,6 @@
 {
     "plugins": [],
-    "version": "5.4.2",
+    "version": "5.5.2",
     "packageManager": "npm",
     "lastOpenedScene": "/assets/example.scene",
     "compressedTextureSoftware": "PVRTexTool",
