@@ -7,7 +7,6 @@ import EnemyIA from "./EnemyIA";
 import { ENEMIES } from "../entities/enemy";
 import { GameState } from "../gameState";
 import {AdvancedDynamicTexture, Rectangle} from "@babylonjs/gui";
-import { getEnemyMaterial } from "../entities/textures";
 export default class EnemySpawner implements IScript {
 
     private spawnCooldown = 3000;
@@ -72,7 +71,11 @@ export default class EnemySpawner implements IScript {
         const spawnPosition = this.mesh.position.add(new Vector3(offsetX, 0, offsetZ));
         spawnPosition.y = groundY + (scaledSize / 2);
         enemyMesh.position = spawnPosition;
-        enemyMesh.material = getEnemyMaterial(this.mesh.getScene(), enemyType);
+        if (stats.texture) {
+            const mat = new StandardMaterial(`mat_${enemyType}_${enemyMesh.uniqueId}`, this.mesh.getScene());
+            mat.diffuseTexture = new Texture(stats.texture, this.mesh.getScene());
+            enemyMesh.material = mat;
+        }
 
         enemyMesh.metadata = enemyMesh.metadata ?? {};
         const scaledStats = {

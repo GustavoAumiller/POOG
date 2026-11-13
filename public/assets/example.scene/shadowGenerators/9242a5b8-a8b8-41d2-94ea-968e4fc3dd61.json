@@ -2,7 +2,7 @@
     "className": "ShadowGenerator",
     "lightId": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
     "id": "9242a5b8-a8b8-41d2-94ea-968e4fc3dd61",
-    "mapSize": 2048,
+    "mapSize": 4096,
     "forceBackFacesOnly": false,
     "darkness": 0,
     "transparencyShadow": true,
