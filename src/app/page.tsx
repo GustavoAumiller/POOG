@@ -7,7 +7,7 @@ import { Engine } from "@babylonjs/core/Engines/engine";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { SceneLoaderFlags } from "@babylonjs/core/Loading/sceneLoaderFlags";
 import { HavokPlugin } from "@babylonjs/core/Physics/v2/Plugins/havokPlugin";
-import { applyGroundTexture } from "@/entities/textures";
+
 import HavokPhysics from "@babylonjs/havok";
 
 import "@babylonjs/core/Loading/loadingScreen";
@@ -41,7 +41,6 @@ import { loadScene } from "babylonjs-editor-tools";
  * loaded objects (scene, meshes, transform nodes, lights, cameras, etc.).
  */
 import { scriptsMap } from "@/scripts";
-import { setupVisualization } from "@/scripts/visualization";
 
 export default function Home() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -88,10 +87,9 @@ export default function Home() {
 			quality: "high",
 		});
 
-		// Configura projeção perspectiva e as fontes de luz demonstráveis.
-		const disposeVisualization = setupVisualization(scene);
-		applyGroundTexture(scene, 40);
-		scene.onDisposeObservable.addOnce(disposeVisualization);
+		if (scene.activeCamera) {
+			scene.activeCamera.attachControl();
+		}
 
 		engine.runRenderLoop(() => {
 			scene.render();
